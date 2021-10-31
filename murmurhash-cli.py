@@ -35,18 +35,18 @@ if len(sys.argv) == 1:
   sys.exit(1)
 
 for path in sys.argv[1:]:
-  text = ''
+  print(path)
+
   try:
     text = open(path, 'r').read()
+
+    print(f"  mmh3 128 {murmurhash3_128(text)}")
+    print(f"  mmh3  64 {murmurhash3_64(text)}")
+    print(f"  mmh3  32 {murmurhash3_32(text)}")
+    print(f"  mmh2  32 {murmurhash2_32(text)}")
+
   except UnicodeDecodeError as e:
-    print(f"{path}")
-    print(f"  binary file. not (yet?) supported")
-    continue
-  #hash = murmurhash3_64(text)
-  #hash = murmurhash2(text)
-  #print(f"{hash} {path}")
-  print(f"{path}")
-  print(f"  mmh3 128 {murmurhash3_128(text)}")
-  print(f"  mmh3  64 {murmurhash3_64(text)}")
-  print(f"  mmh3  32 {murmurhash3_32(text)}")
-  print(f"  mmh2  32 {murmurhash2_32(text)}")
+    print(f"  error: binary file. not (yet?) supported")
+
+  except FileNotFoundError as e:
+    print(f"  error: no such file")
