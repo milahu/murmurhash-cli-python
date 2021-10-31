@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
+# generate murmurhash3 and murmurhash2 of files as hex digest
+
+# limitation: does NOT work with large files = larger than your RAM
+
 import sys
 import mmh3
 import murmurhash
 
 if len(sys.argv) == 1:
-  print(f"usage: {sys.argv[0]} inputfile...", file=sys.stderr)
+  print(f"usage: {sys.argv[0]} inputfile [inputfile...]", file=sys.stderr)
   sys.exit(1)
 
 for path in sys.argv[1:]:
@@ -13,11 +17,14 @@ for path in sys.argv[1:]:
 
   try:
     bytes = open(path, 'rb').read()
+
     hash3 = mmh3.hash_bytes(bytes).hex()
     hash2 = murmurhash.hash_bytes(bytes).to_bytes(4, byteorder='big', signed=True).hex()
+
     print(f"  mmh3 128 {hash3}")
     print(f"  mmh3  64 {hash3[0:16]}")
     print(f"  mmh3  32 {hash3[0:8]}")
+
     print(f"  mmh2  32 {hash2}")
     print(f"  mmh2  16 {hash2[0:4]}")
 
