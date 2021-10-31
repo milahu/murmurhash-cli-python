@@ -50,3 +50,9 @@ for path in sys.argv[1:]:
 
   except FileNotFoundError as e:
     print(f"  error: no such file")
+
+  except PermissionError as e:
+    print(f"  error: permission denied")
+
+  except Exception as e:
+    print(f"  error: {type(e).__name__}: {e}")
