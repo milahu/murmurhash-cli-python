@@ -24,11 +24,22 @@ def murmurhash2(str, num_bytes=4, encoding='utf8'):
   hash_bytes = murmurhash.hash_bytes(str.encode(encoding)).to_bytes(4, byteorder='big', signed=True)
   return hexstr(hash_bytes[0:num_bytes])
 
+def murmurhash2_binary(bytes, num_bytes=4):
+  hash_bytes = murmurhash.hash_bytes(bytes).to_bytes(4, byteorder='big', signed=True)
+  return hexstr(hash_bytes[0:num_bytes])
+
 def murmurhash2_32(str):
   return murmurhash2(str, 4)
 
 def murmurhash2_16(str):
   return murmurhash2(str, 2)
+
+# FIXME is murmurhash2 always "binary"?
+def murmurhash2_32_binary(bytes):
+  return murmurhash2_binary(bytes, 4)
+
+def murmurhash2_16_binary(bytes):
+  return murmurhash2_binary(bytes, 2)
 
 if len(sys.argv) == 1:
   print(f"usage: {sys.argv[0]} inputfile...", file=sys.stderr)
@@ -38,15 +49,19 @@ for path in sys.argv[1:]:
   print(path)
 
   try:
-    text = open(path, 'r').read()
+    try:
+      text = open(path, 'r').read()
 
-    print(f"  mmh3 128 {murmurhash3_128(text)}")
-    print(f"  mmh3  64 {murmurhash3_64(text)}")
-    print(f"  mmh3  32 {murmurhash3_32(text)}")
-    print(f"  mmh2  32 {murmurhash2_32(text)}")
+      print(f"  mmh3 128 {murmurhash3_128(text)}")
+      print(f"  mmh3  64 {murmurhash3_64(text)}")
+      print(f"  mmh3  32 {murmurhash3_32(text)}")
+      print(f"  mmh2  32 {murmurhash2_32(text)}")
 
-  except UnicodeDecodeError as e:
-    print(f"  error: binary file. not (yet?) supported")
+    except UnicodeDecodeError as e:
+      bytes = open(path, 'rb').read()
+      print(f"  mmh2  32 {murmurhash2_32_binary(bytes)}")
+      print(f"  mmh2  16 {murmurhash2_16_binary(bytes)}")
+      print(f"  error: binary file. mmh3 not (yet?) supported")
 
   except FileNotFoundError as e:
     print(f"  error: no such file")
