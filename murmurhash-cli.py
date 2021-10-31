@@ -35,7 +35,13 @@ if len(sys.argv) == 1:
   sys.exit(1)
 
 for path in sys.argv[1:]:
-  text = open(path, 'r').read()
+  text = ''
+  try:
+    text = open(path, 'r').read()
+  except UnicodeDecodeError as e:
+    print(f"{path}")
+    print(f"  binary file. not (yet?) supported")
+    continue
   #hash = murmurhash3_64(text)
   #hash = murmurhash2(text)
   #print(f"{hash} {path}")
